@@ -91,6 +91,7 @@ public class SplashActivity extends BaseActivity {
             public void run() {
 
                 startActivity(new Intent(SplashActivity.this, MapsActivity.class));
+                finish();
             }
         }, wait);
     }
