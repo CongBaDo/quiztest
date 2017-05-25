@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nemo.com.androidquiz.R;
+import nemo.com.androidquiz.adapter.InfoMapPagerAdapter;
 import nemo.com.androidquiz.utils.LocationController;
 
 /**
@@ -35,7 +36,10 @@ import nemo.com.androidquiz.utils.LocationController;
 
 public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
         GoogleMap.OnMapClickListener,
-        GoogleMap.OnMarkerClickListener {
+        GoogleMap.OnCameraMoveStartedListener,
+        GoogleMap.OnCameraMoveCanceledListener,
+        GoogleMap.OnInfoWindowClickListener,
+        GoogleMap.OnMarkerClickListener{
 
     private static final String TAG = "QuizMapFragment";
 
@@ -45,6 +49,7 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
     private Marker mMyMarker;
     private List<Marker> mListMarker;
 
+    private InfoMapPagerAdapter infoMapPagerAdapter;
     @Override
     public int getResourceLayout() {
         return R.layout.fragment_maps;
@@ -224,5 +229,20 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
 //                .zIndex(1.0f)
 //                .position(new LatLng(location.getLatitude(), location.getLongitude()))
 //                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(mLogo, AppConstant.NUMBER_ICON_SIZE, AppConstant.NUMBER_ICON_SIZE))));
+    }
+
+    @Override
+    public void onCameraMoveCanceled() {
+
+    }
+
+    @Override
+    public void onCameraMoveStarted(int i) {
+
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+
     }
 }

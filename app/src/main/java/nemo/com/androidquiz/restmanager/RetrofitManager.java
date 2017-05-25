@@ -50,12 +50,7 @@ public class RetrofitManager {
 
     public RestAPIEndPointInterface getRetrofitInterface() {
         if (retrofitInterface == null) {
-            if (BuildConfig.DEBUG) {
-                // do something for a debug build
-                retrofitInterface = initialRetrofit(APIConstant.TEST_BASE_URL);
-            }else{
-                retrofitInterface = initialRetrofit(APIConstant.PRODUCTION_BASE_URL);
-            }
+            retrofitInterface = initialRetrofit(APIConstant.TEST_BASE_URL);
         }
 
         return retrofitInterface;
