@@ -1,9 +1,7 @@
 package nemo.com.androidquiz.activity;
 
 import android.Manifest;
-import android.app.NotificationManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -42,7 +40,7 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate " + SplashActivity.class.getName());
         onNewIntent(getIntent());
-
+        RetrofitManager.getInstance().config(getApplicationContext());
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
                     getApplicationContext().getPackageName(),

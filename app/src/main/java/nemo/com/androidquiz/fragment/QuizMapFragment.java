@@ -1,17 +1,22 @@
 package nemo.com.androidquiz.fragment;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,6 +33,11 @@ import java.util.List;
 
 import nemo.com.androidquiz.R;
 import nemo.com.androidquiz.adapter.InfoMapPagerAdapter;
+import nemo.com.androidquiz.customizedview.TouchableWrapper;
+import nemo.com.androidquiz.model.seach.SearchingReqObj;
+import nemo.com.androidquiz.model.seach.SearchingResObj;
+import nemo.com.androidquiz.restmanager.CommonInterface;
+import nemo.com.androidquiz.restservice.SearchingService;
 import nemo.com.androidquiz.utils.LocationController;
 
 /**
@@ -39,6 +49,7 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
         GoogleMap.OnCameraMoveStartedListener,
         GoogleMap.OnCameraMoveCanceledListener,
         GoogleMap.OnInfoWindowClickListener,
+        GoogleMap.OnCameraMoveListener,
         GoogleMap.OnMarkerClickListener{
 
     private static final String TAG = "QuizMapFragment";
@@ -48,11 +59,46 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
     private LocationController locationController;
     private Marker mMyMarker;
     private List<Marker> mListMarker;
+    private Location mCameraLocation, mPreviousCameraLocation;
 
     private InfoMapPagerAdapter infoMapPagerAdapter;
     @Override
     public int getResourceLayout() {
         return R.layout.fragment_maps;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        TouchableWrapper mTouchView = new TouchableWrapper(getActivity());
+        mTouchView.setTouchListener(new TouchableWrapper.TouchListener() {
+            @Override
+            public void onUpListener() {
+
+                if(mCameraLocation == null && mPreviousCameraLocation == null){
+                    return;
+                }
+
+                float moveDistance = mPreviousCameraLocation.distanceTo(mCameraLocation)/1000;
+                Log.e(TAG, "onUpListener "+moveDistance+" "+" "+mCameraLocation.getLatitude());
+                mPreviousCameraLocation.setLatitude(mCameraLocation.getLatitude());
+                mPreviousCameraLocation.setLongitude(mCameraLocation.getLongitude());
+
+                    if(mCameraLocation != null && moveDistance > 1){
+                        Log.e(TAG, "onUpListener NOT NULL "+moveDistance+" "+" "+mCameraLocation.getLatitude());
+//                        resetData();
+//                        loadAddress(mCameraLocation);
+//                        ((MainActivity)getActivity()).filterLocation(0, locationIds, mRadius, mCameraLocation);
+                    }
+            }
+
+            @Override
+            public void onDownListener() {
+            }
+        });
+        mTouchView.addView(super.onCreateView(inflater, container, savedInstanceState));
+        return mTouchView;
     }
 
     @Override
@@ -63,6 +109,8 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
         mMapView = (MapView) getView().findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this);
+
+        mCameraLocation = new Location("");
 
         locationController = new LocationController(getActivity());
         locationController.initController();
@@ -75,6 +123,10 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
             @Override
             public void onLocationChanged(Location location) {
                 Log.e(TAG, "onLocationChanged " + location.getLatitude() + " " + location.getLongitude());
+
+                mPreviousCameraLocation = new Location("");
+                mPreviousCameraLocation.setLatitude(location.getLatitude());
+                mPreviousCameraLocation.setLongitude(location.getLongitude());
 
                 moveCamera(location, 15);
             }
@@ -140,9 +192,29 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
         mGoogleMap.getUiSettings().setCompassEnabled(true);
         mGoogleMap.setOnMapClickListener(this);
         mGoogleMap.setOnMarkerClickListener(this);
-        //Display the object store of the Inside Radius of 1,000m (Temporary).
-        mGoogleMap.setMinZoomPreference(15);
 
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mGoogleMap.setMyLocationEnabled(true);
+        }
+
+        mGoogleMap.setOnCameraMoveStartedListener(this);
+        mGoogleMap.setOnCameraMoveListener(this);
+        mGoogleMap.setOnCameraMoveCanceledListener(this);
+        mGoogleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onCameraMove() {
+        if(mCameraLocation != null){
+
+            mCameraLocation.setLatitude(mGoogleMap.getCameraPosition().target.latitude);
+            mCameraLocation.setLongitude(mGoogleMap.getCameraPosition().target.longitude);
+        }
     }
 
     public void moveCamera(final Location location, float levelZoom) {
@@ -157,7 +229,7 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
             mMyMarker.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
         }
 
-        CameraPosition cameraPosition = new CameraPosition.Builder()
+        final CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(location.getLatitude(), location.getLongitude()))
                 .zoom(levelZoom)
                 .build();
@@ -167,6 +239,8 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
             public void onFinish() {
 
                 Log.v(TAG, "onFinish ");
+
+                searchData("restaurant", mCameraLocation);
             }
 
             @Override
@@ -245,4 +319,27 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
     public void onInfoWindowClick(Marker marker) {
 
     }
+
+    private void searchData(String query, Location location){
+        SearchingReqObj searchingReqObj = new SearchingReqObj();
+        searchingReqObj.setTerm(query);
+        searchingReqObj.setLatitude(location.getLatitude());
+        searchingReqObj.setLongitude(location.getLongitude());
+        searchingReqObj.setRadius(30);
+
+        SearchingService searchingService = new SearchingService();
+        searchingService.setRequestObject(searchingReqObj);
+        searchingService.request(getActivity(), new CommonInterface.ModelResponse<SearchingResObj>() {
+            @Override
+            public void onSuccess(SearchingResObj result) {
+
+            }
+
+            @Override
+            public void onFail() {
+
+            }
+        });
+    }
+
 }

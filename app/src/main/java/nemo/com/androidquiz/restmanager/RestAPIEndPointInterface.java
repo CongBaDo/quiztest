@@ -17,4 +17,5 @@ public interface RestAPIEndPointInterface {
 
     @POST("businesses/search")
     Call<SearchingResObj> search(@Body SearchingReqObj loginRequest);
+}
 //
