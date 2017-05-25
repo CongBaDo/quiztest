@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--Base SIZE S-->
+    <dimen name="base_1">1dp</dimen>
+    <dimen name="base_2">2dp</dimen>
+    <dimen name="base_4">4dp</dimen>
+    <dimen name="base_6">6dp</dimen>
+    <dimen name="base_8">8dp</dimen>
+    <dimen name="base_10">10dp</dimen>
+    <dimen name="base_12">12dp</dimen>
+    <dimen name="base_16">16dp</dimen>
+    <dimen name="base_20">20dp</dimen>
+    <dimen name="base_24">24dp</dimen>
+    <dimen name="base_28">28dp</dimen>
+    <dimen name="base_32">32dp</dimen>
+    <dimen name="base_36">36dp</dimen>
+    <dimen name="base_40">40dp</dimen>
+    <dimen name="base_44">44dp</dimen>
+    <dimen name="base_46">46dp</dimen>
+    <dimen name="base_48">48dp</dimen>
+    <dimen name="base_52">52dp</dimen>
+    <dimen name="base_56">56dp</dimen>
+    <dimen name="base_60">60dp</dimen>
+    <dimen name="base_64">64dp</dimen>
+    <dimen name="base_72">72dp</dimen>
+    <dimen name="base_80">80dp</dimen>
+    <dimen name="base_96">96dp</dimen>
+    <dimen name="base_100">100dp</dimen>
+    <dimen name="base_114">114dp</dimen>
+    <dimen name="base_118">118dp</dimen>
+    <dimen name="base_124">124dp</dimen>
+    <dimen name="base_128">128dp</dimen>
+    <dimen name="base_132">132dp</dimen>
+    <dimen name="base_136">136dp</dimen>
+    <dimen name="base_140">140dp</dimen>
+    <dimen name="base_144">144dp</dimen>
+    <dimen name="base_148">148dp</dimen>
+    <dimen name="base_152">152dp</dimen>
+    <dimen name="base_164">164dp</dimen>
+    <dimen name="base_200">200dp</dimen>
+    <dimen name="base_240">240dp</dimen>
+    <dimen name="base_256">256dp</dimen>
+    <dimen name="base_260">260dp</dimen>
+    <dimen name="base_264">264dp</dimen>
+    <dimen name="base_276">276dp</dimen>
+    <dimen name="base_280">280dp</dimen>
+    <dimen name="base_296">296dp</dimen>
+
+    <!--Base SIZE E-->
+
+    <!--Base TextSize S-->
+    <dimen name="textsize_8">8sp</dimen>
+    <dimen name="textsize_9">9sp</dimen>
+    <dimen name="textsize_10">10sp</dimen>
+    <dimen name="textsize_11">11sp</dimen>
+    <dimen name="textsize_12">12sp</dimen>
+    <dimen name="textsize_13">13sp</dimen>
+    <dimen name="textsize_14">14sp</dimen>
+    <dimen name="textsize_15">15sp</dimen>
+    <dimen name="textsize_16">16sp</dimen>
+    <dimen name="textsize_17">17dp</dimen>
+    <dimen name="textsize_18">18dp</dimen>
+    <dimen name="textsize_19">19dp</dimen>
+    <dimen name="textsize_20">20dp</dimen>
+    <dimen name="textsize_21">21dp</dimen>
+    <dimen name="textsize_22">22dp</dimen>
+    <dimen name="textsize_23">23dp</dimen>
+    <dimen name="textsize_24">24dp</dimen>
+    <dimen name="textsize_25">25dp</dimen>
+    <dimen name="textsize_26">26dp</dimen>
+    <dimen name="textsize_28">28sp</dimen>
+    <!--Base TextSize E-->
+
+    <dimen name="grid_amenity_house_size">108dp</dimen>
+    <dimen name="grid_amenity_room_size">108dp</dimen>
+    <dimen name="grid_tenant_type_size">68dp</dimen>
+
+</resources>
