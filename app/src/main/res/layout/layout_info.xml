@@ -21,4 +21,10 @@
         style="@style/LeftText"
         android:padding="0dp" />
 
+    <RatingBar
+        style="?android:attr/ratingBarStyleSmall"
+        android:id="@+id/rating_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>

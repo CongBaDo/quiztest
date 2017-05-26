@@ -16,7 +16,7 @@ import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.Scrollable;
 
 /**
- * Created by doba on 5/10/17.
+ * Created by doba on 5/25/17.
  */
 
 

@@ -20,16 +20,11 @@ import retrofit2.http.Query;
 
 public interface RestAPIEndPointInterface {
 
-//    @GET("rent")
-//    Call<BaseDataResponse<ItemTenantPost>> getRentDetailById(@Query("uid") String id);
 
     @GET("businesses/search")
     Call<SearchingResObj> search(@Query("term")String term, @Query("latitude")double lat, @Query("longitude")double lng,
                                  @Query("limit")int limit, @Query("radius")int radius,
                                  @Query("location")String location);
-//
-    @POST("token")
-    Call<TokenResObj> getToken(@Body TokenReqObj tokenReqObj);
 
     @FormUrlEncoded
     @POST("token")

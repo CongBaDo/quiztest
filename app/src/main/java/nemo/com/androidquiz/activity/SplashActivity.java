@@ -32,8 +32,6 @@ import nemo.com.androidquiz.utils.TokenManager;
 public class SplashActivity extends BaseActivity {
 
     private static final String TAG = "SplashActivity";
-    private Handler mHandler;
-    long wait = 1500;
 
     @Override
     public int getResourceLayout() {
@@ -60,6 +58,11 @@ public class SplashActivity extends BaseActivity {
         } catch (NoSuchAlgorithmException e) {
 
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         checkPermission();
     }
@@ -88,15 +91,6 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void loadMainView(){
-//        mHandler = new Handler();
-//        mHandler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//
-                startActivity(new Intent(SplashActivity.this, MapsActivity.class));
-                finish();
-//            }
-//        }, wait);
         getToken();
     }
 

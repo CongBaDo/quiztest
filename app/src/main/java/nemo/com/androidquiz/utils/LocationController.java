@@ -19,7 +19,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 /**
- * Created by doba on 3/21/17.
+ * Created by doba on 5/25/17.
  */
 
 public class LocationController implements GoogleApiClient.ConnectionCallbacks,

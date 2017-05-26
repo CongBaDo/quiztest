@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -133,7 +134,6 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
 
             @Override
             public void onLocationChanged(Location location) {
-                Log.e(TAG, "onLocationChanged " + location.getLatitude() + " " + location.getLongitude());
 
                 mPreviousCameraLocation = new Location("");
                 mPreviousCameraLocation.setLatitude(location.getLatitude());
@@ -217,7 +217,7 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
         Log.e(TAG, "onMapReady ");
         mGoogleMap = map;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
+        mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
         mGoogleMap.getUiSettings().setCompassEnabled(true);
         mGoogleMap.setOnMapClickListener(this);
         mGoogleMap.setOnMarkerClickListener(this);
@@ -229,12 +229,6 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
         mGoogleMap.setOnCameraMoveStartedListener(this);
         mGoogleMap.setOnCameraMoveListener(this);
         mGoogleMap.setOnCameraMoveCanceledListener(this);
-        mGoogleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-            @Override
-            public void onCameraChange(CameraPosition cameraPosition) {
-
-            }
-        });
 
         mGoogleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
         mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
@@ -246,7 +240,6 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
                 for(int i = 0; i < bussinessItems.size(); i++){
                     if(bussinessItem.getId() == bussinessItems.get(i).getId()){
 
-                        Log.e(TAG, "info "+bussinessItem.getName());
                         Intent intent = new Intent(getActivity(), BussinessDetailActivity.class);
                         intent.putExtra(AppConstant.INTENT_BUSSINESS_DETAIL, bussinessItem);
                         startActivity(intent);
@@ -287,8 +280,6 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
         mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), new GoogleMap.CancelableCallback() {
             @Override
             public void onFinish() {
-
-                Log.v(TAG, "onFinish ");
                 mPreviousCameraLocation.setLatitude(mCameraLocation.getLatitude());
                 mPreviousCameraLocation.setLongitude(mCameraLocation.getLongitude());
                 searchData("restaurant", mCameraLocation);
@@ -321,7 +312,7 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
             alertBuilder.setCancelable(false);
             alertBuilder.setTitle(getString(R.string.you_location_serivce_not_enable_title));
             alertBuilder.setMessage(getString(R.string.you_location_serivce_not_enable_message));
-            alertBuilder.setPositiveButton("Enable", new DialogInterface.OnClickListener() {
+            alertBuilder.setPositiveButton(getString(R.string.but_enable), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                     Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -398,7 +389,6 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
 
         for(int i = 0; i < itemList.size(); i++){
             BussinessItem item = itemList.get(i);
-
             int icon =  R.drawable.ic_maker_other;
 
             MarkerOptions markerOption = new MarkerOptions().position(new LatLng(item.getCoordinateBussiness().getLatitude(), item.getCoordinateBussiness().getLongitude()));
@@ -412,7 +402,6 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
             maps.put(marker, item);
 
         }
-
     }
 
     @Override
@@ -435,8 +424,7 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
         private View view;
 
         public CustomInfoWindowAdapter() {
-            view = getActivity().getLayoutInflater().inflate(R.layout.layout_info,
-                    null);
+            view = getActivity().getLayoutInflater().inflate(R.layout.layout_info, null);
         }
 
         @Override
@@ -449,12 +437,14 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
             mMyMarker = marker;
             TextView tvAddress = (TextView)view.findViewById(R.id.tv_addess);
             TextView tvTitle = (TextView) view.findViewById(R.id.tv_title);
+            RatingBar ratingBar = (RatingBar)view.findViewById(R.id.rating_bar);
 
             BussinessItem bussinessItem = maps.get(marker);
             for(int i = 0; i < bussinessItems.size(); i++){
                 if(bussinessItem.getId() == bussinessItems.get(i).getId()){
                     tvTitle.setText(bussinessItem.getName());
                     tvAddress.setText(bussinessItem.getLocation().getDisplayAdresses()[0]);
+                    ratingBar.setRating(bussinessItem.getRating());
                     break;
                 }
             }

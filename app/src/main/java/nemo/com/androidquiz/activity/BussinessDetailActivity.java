@@ -1,8 +1,6 @@
 package nemo.com.androidquiz.activity;
 
-import android.content.Intent;
 import android.graphics.Color;
-import android.support.v4.widget.NestedScrollView;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -11,8 +9,6 @@ import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCal
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import nemo.com.androidquiz.R;
 import nemo.com.androidquiz.customizedview.ObservableNestedScrollview;
@@ -85,7 +81,7 @@ public class BussinessDetailActivity extends BaseActivity {
             if(i == bussinessItem.getCategoryItems().size() - 1){
                 category = category + bussinessItem.getCategoryItems().get(i).getTitle();
             }else{
-                category = category +",  "+ bussinessItem.getCategoryItems().get(i).getTitle();
+                category = bussinessItem.getCategoryItems().get(i).getTitle()+", "+category;
             }
         }
 

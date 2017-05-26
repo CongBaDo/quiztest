@@ -6,11 +6,7 @@ package nemo.com.androidquiz.utils;
 
 public class AppConstant {
 
-    public static final int PERMISSION_CALL = 5;
-    public static final int PERMISSION_DATA = 1;
-    public static final int PERMISSION_CAMERA = 2;
     public static final int PERMISSION_LOCATION = 3;
-    public static final int PERMISSION_PHONE = 4;
 
     public static final String INTENT_BUSSINESS_DETAIL = "bussiness_detail";
 }
