@@ -57,6 +57,7 @@
                     android:padding="@dimen/base_16">
 
                     <TextView
+                        android:textStyle="bold"
                         android:id="@+id/tv_title"
                         style="@style/LeftText"
                         android:padding="0dp"
@@ -67,7 +68,7 @@
                         android:id="@+id/tv_addess"
                         style="@style/LeftText"
                         android:padding="0dp"
-                        android:textColor="@color/black"
+                        android:textColor="@color/grey"
                         android:textSize="@dimen/textsize_16" />
 
                     <RatingBar

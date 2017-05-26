@@ -45,7 +45,7 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate " + SplashActivity.class.getName());
         onNewIntent(getIntent());
-        RetrofitManager.getInstance().config(getApplicationContext());
+        RetrofitManager.getInstance().config();
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
                     getApplicationContext().getPackageName(),

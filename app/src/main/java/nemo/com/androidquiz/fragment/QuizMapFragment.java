@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -95,11 +96,10 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
                 mPreviousCameraLocation.setLatitude(mCameraLocation.getLatitude());
                 mPreviousCameraLocation.setLongitude(mCameraLocation.getLongitude());
 
-                    if(mCameraLocation != null && moveDistance > 1){
-                        Log.e(TAG, "onUpListener NOT NULL "+moveDistance+" "+" "+mCameraLocation.getLatitude());
-                        resetData();
-                        searchData("restaurant", mCameraLocation);
-                    }
+                if(mCameraLocation != null && moveDistance > 1){
+                    resetData();
+                    searchData("restaurant", mCameraLocation);
+                }
             }
 
             @Override
@@ -139,19 +139,33 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
                 mPreviousCameraLocation.setLatitude(location.getLatitude());
                 mPreviousCameraLocation.setLongitude(location.getLongitude());
 
-//                searchingReqObj.setLatitude(37.786882);
-//                searchingReqObj.setLongitude(-122.399972);
-                Location fakeLocation = new Location("");
-                fakeLocation.setLatitude(37.786882);
-                fakeLocation.setLongitude(-122.399972);
-                moveCamera(fakeLocation, 15);
+                mCameraLocation.setLatitude(location.getLatitude());
+                mCameraLocation.setLongitude(location.getLongitude());
+                moveCamera(mPreviousCameraLocation, 15);
             }
         });
+
+        Button butTest = (Button)view.findViewById(R.id.but_test);
+        butTest.setOnClickListener(this);
     }
 
     @Override
     public void initViews(View view) {
         super.initViews(view);
+    }
+
+    @Override
+    public void onClick(View view) {
+        super.onClick(view);
+        switch (view.getId()){
+            case R.id.but_test:
+                resetData();
+                Location fakeLocation = new Location("");
+                fakeLocation.setLatitude(37.786882);
+                fakeLocation.setLongitude(-122.399972);
+                moveCamera(fakeLocation, 15);
+                break;
+        }
     }
 
     @Override
@@ -275,6 +289,8 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
             public void onFinish() {
 
                 Log.v(TAG, "onFinish ");
+                mPreviousCameraLocation.setLatitude(mCameraLocation.getLatitude());
+                mPreviousCameraLocation.setLongitude(mCameraLocation.getLongitude());
                 searchData("restaurant", mCameraLocation);
             }
 
@@ -342,11 +358,10 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
     private void searchData(String query, Location location){
         SearchingReqObj searchingReqObj = new SearchingReqObj();
         searchingReqObj.setTerm(query);
-//        searchingReqObj.setLatitude(location.getLatitude());
-//        searchingReqObj.setLongitude(location.getLongitude());
-//        searchingReqObj.setTerm("delis");
-        searchingReqObj.setLatitude(37.786882);
-        searchingReqObj.setLongitude(-122.399972);
+        searchingReqObj.setLatitude(location.getLatitude());
+        searchingReqObj.setLongitude(location.getLongitude());
+        searchingReqObj.setLimit(20);
+        searchingReqObj.setLocation("address");
         searchingReqObj.setRadius(30);
 
         SearchingService searchingService = new SearchingService();
@@ -358,7 +373,6 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
                 if(result.getCode() == null){
                     bussinessItems = result.getBussinessItems();
                     loadMarkers(bussinessItems, 0);
-                    Log.e(TAG, "onSuccess "+result.getBussinessItems().size()+" "+result.getBussinessItems().get(0).getLocation().getDisplayAdresses()[0]);
                 }else{
                     Log.e(TAG, "onSuccess code "+result.getCode().getDescription());
                 }
@@ -381,7 +395,6 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
         if(getActivity() == null || itemList == null || itemList.size() == 0){
             return;
         }
-        Log.e(TAG, "loadMarkers "+itemList.size()+" "+selectedPosition);
 
         for(int i = 0; i < itemList.size(); i++){
             BussinessItem item = itemList.get(i);

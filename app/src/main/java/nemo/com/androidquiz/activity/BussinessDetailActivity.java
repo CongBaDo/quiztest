@@ -78,7 +78,18 @@ public class BussinessDetailActivity extends BaseActivity {
         tvAddress.setText(String.format(getString(R.string.title_address), bussinessItem.getLocation().getDisplayAdresses()[0], bussinessItem.getLocation().getCity()));
         tvPhone.setText(String.format(getString(R.string.title_phone), bussinessItem.getDisplayPhone()));
         tvReview.setText(String.format(getString(R.string.title_review), bussinessItem.getReviewCount()));
-        tvCategory.setText(String.format(getString(R.string.title_category), bussinessItem.getCategoryItems().get(0).getTitle(), bussinessItem.getCategoryItems().get(1).getTitle()));
+
+        String category = "";
+        for(int i = 0; i < bussinessItem.getCategoryItems().size(); i++){
+
+            if(i == bussinessItem.getCategoryItems().size() - 1){
+                category = category + bussinessItem.getCategoryItems().get(i).getTitle();
+            }else{
+                category = category +",  "+ bussinessItem.getCategoryItems().get(i).getTitle();
+            }
+        }
+
+        tvCategory.setText(String.format(getString(R.string.title_category), category));
         ratingBar.setRating(bussinessItem.getRating());
 
         Picasso.with(this).load(bussinessItem.getImageUrl()).into(imgCover);

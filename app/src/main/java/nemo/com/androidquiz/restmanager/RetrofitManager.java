@@ -44,7 +44,7 @@ public class RetrofitManager {
         return sRetrofitManager;
     }
 
-    public void config(Context context){
+    public void config(){
         builder = null;
         try {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();

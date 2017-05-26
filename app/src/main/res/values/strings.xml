@@ -6,6 +6,8 @@
     <string name="title_address">Address: %1$s, %2$s</string>
     <string name="title_rating">Rating: %1$d</string>
     <string name="title_review">Review: %1$d</string>
-    <string name="title_category">Category: %1$s, %2$s</string>
+    <string name="title_category">Category: %1$s</string>
     <string name="title_phone">Phone: %1$s</string>
+
+    <string name="test_location">Location Test</string>
 </resources>

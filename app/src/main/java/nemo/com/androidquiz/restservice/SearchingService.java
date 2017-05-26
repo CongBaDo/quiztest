@@ -17,7 +17,7 @@ public class SearchingService extends BaseService<SearchingReqObj, SearchingResO
 
     @Override
     public void request(Context context, CommonInterface.ModelResponse callBack) {
-        RetrofitManager.getInstance().sendApiRequest(RetrofitManager.getInstance().getRetrofitInterface().search(searchingReqObj.getTerm(), searchingReqObj.getLatitude(), searchingReqObj.getLongitude(), searchingReqObj.getLimit(), searchingReqObj.getRadius()), callBack);
+        RetrofitManager.getInstance().sendApiRequest(RetrofitManager.getInstance().getRetrofitInterface().search(searchingReqObj.getTerm(), searchingReqObj.getLatitude(), searchingReqObj.getLongitude(), searchingReqObj.getLimit(), searchingReqObj.getRadius(), searchingReqObj.getLocation()), callBack);
     }
 
     @Override

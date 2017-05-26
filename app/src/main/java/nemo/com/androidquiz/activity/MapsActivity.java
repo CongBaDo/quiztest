@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import nemo.com.androidquiz.R;
 import nemo.com.androidquiz.fragment.QuizMapFragment;
+import nemo.com.androidquiz.restmanager.RetrofitManager;
 
 public class MapsActivity extends BaseActivity {
 
@@ -29,6 +30,8 @@ public class MapsActivity extends BaseActivity {
     @Override
     public void initViews() {
         super.initViews();
+
+        RetrofitManager.getInstance().resetManager();
 
         loadFragment(new QuizMapFragment(), R.id.view_content);
     }
