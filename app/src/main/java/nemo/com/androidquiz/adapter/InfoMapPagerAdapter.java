@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nemo.com.androidquiz.R;
-import nemo.com.androidquiz.model.PropertyItem;
+import nemo.com.androidquiz.model.BussinessItem;
 
 /**
  * View pager adapter
@@ -24,7 +24,7 @@ public class InfoMapPagerAdapter extends PagerAdapter {
 
     private static final String TAG = "InfoMapPagerAdapter";
     private Context mContext;
-    private List<PropertyItem> arrayImage = new ArrayList<>();
+    private List<BussinessItem> arrayImage = new ArrayList<>();
 
     public interface InfoClickListener{
         public void onItemClickListener(int pos);
@@ -36,7 +36,7 @@ public class InfoMapPagerAdapter extends PagerAdapter {
         this.mContext = mContext;
     }
 
-    public void setData(List<PropertyItem> propertyItems){
+    public void setData(List<BussinessItem> propertyItems){
         Log.e(TAG, "setData "+propertyItems.size());
         this.arrayImage.clear();
         this.arrayImage.addAll(propertyItems);

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,15 +32,17 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import nemo.com.androidquiz.R;
-import nemo.com.androidquiz.adapter.InfoMapPagerAdapter;
 import nemo.com.androidquiz.customizedview.TouchableWrapper;
+import nemo.com.androidquiz.model.BussinessItem;
 import nemo.com.androidquiz.model.seach.SearchingReqObj;
 import nemo.com.androidquiz.model.seach.SearchingResObj;
 import nemo.com.androidquiz.restmanager.CommonInterface;
 import nemo.com.androidquiz.restservice.SearchingService;
+import nemo.com.androidquiz.utils.BitmapUtility;
 import nemo.com.androidquiz.utils.LocationController;
 
 /**
@@ -50,7 +55,8 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
         GoogleMap.OnCameraMoveCanceledListener,
         GoogleMap.OnInfoWindowClickListener,
         GoogleMap.OnCameraMoveListener,
-        GoogleMap.OnMarkerClickListener{
+        GoogleMap.OnMarkerClickListener,
+        GoogleMap.InfoWindowAdapter{
 
     private static final String TAG = "QuizMapFragment";
 
@@ -59,9 +65,11 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
     private LocationController locationController;
     private Marker mMyMarker;
     private List<Marker> mListMarker;
+    private List<BussinessItem> bussinessItems;
     private Location mCameraLocation, mPreviousCameraLocation;
 
-    private InfoMapPagerAdapter infoMapPagerAdapter;
+    private HashMap<Marker, BussinessItem> maps = new HashMap();
+
     @Override
     public int getResourceLayout() {
         return R.layout.fragment_maps;
@@ -105,6 +113,8 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        bussinessItems = new ArrayList<>();
+
         mListMarker = new ArrayList<Marker>();
         mMapView = (MapView) getView().findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
@@ -128,10 +138,14 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
                 mPreviousCameraLocation.setLatitude(location.getLatitude());
                 mPreviousCameraLocation.setLongitude(location.getLongitude());
 
-                moveCamera(location, 15);
+//                searchingReqObj.setLatitude(37.786882);
+//                searchingReqObj.setLongitude(-122.399972);
+                Location fakeLocation = new Location("");
+                fakeLocation.setLatitude(37.786882);
+                fakeLocation.setLongitude(-122.399972);
+                moveCamera(fakeLocation, 15);
             }
         });
-
     }
 
     @Override
@@ -206,6 +220,9 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
 
             }
         });
+
+        mGoogleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+
     }
 
     @Override
@@ -239,7 +256,6 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
             public void onFinish() {
 
                 Log.v(TAG, "onFinish ");
-
                 searchData("restaurant", mCameraLocation);
             }
 
@@ -290,22 +306,6 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
     }
 
     @Override
-    public boolean onMarkerClick(Marker marker) {
-        return false;
-    }
-
-    /**
-     * Draw user 's current position to map
-     */
-    private void addUserMarker(Location location) {
-        //Add user marker
-//        mMyMarker = mGoogleMap.addMarker(new MarkerOptions()
-//                .zIndex(1.0f)
-//                .position(new LatLng(location.getLatitude(), location.getLongitude()))
-//                .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(mLogo, AppConstant.NUMBER_ICON_SIZE, AppConstant.NUMBER_ICON_SIZE))));
-    }
-
-    @Override
     public void onCameraMoveCanceled() {
 
     }
@@ -323,8 +323,11 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
     private void searchData(String query, Location location){
         SearchingReqObj searchingReqObj = new SearchingReqObj();
         searchingReqObj.setTerm(query);
-        searchingReqObj.setLatitude(location.getLatitude());
-        searchingReqObj.setLongitude(location.getLongitude());
+//        searchingReqObj.setLatitude(location.getLatitude());
+//        searchingReqObj.setLongitude(location.getLongitude());
+//        searchingReqObj.setTerm("delis");
+        searchingReqObj.setLatitude(37.786882);
+        searchingReqObj.setLongitude(-122.399972);
         searchingReqObj.setRadius(30);
 
         SearchingService searchingService = new SearchingService();
@@ -333,6 +336,13 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
             @Override
             public void onSuccess(SearchingResObj result) {
 
+                if(result.getCode() == null){
+                    bussinessItems = result.getBussinessItems();
+                    loadMarkers(bussinessItems, 0);
+                    Log.e(TAG, "onSuccess "+result.getBussinessItems().size()+" "+result.getBussinessItems().get(0).getLocation().getDisplayAdresses()[0]);
+                }else{
+                    Log.e(TAG, "onSuccess code "+result.getCode().getDescription());
+                }
             }
 
             @Override
@@ -342,4 +352,91 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
         });
     }
 
+    private void loadMarkers(List<BussinessItem> itemList, int selectedPosition){
+
+        if(mGoogleMap == null){
+            return;
+        }
+        maps.clear();
+        this.mGoogleMap.clear();
+        if(getActivity() == null || itemList == null || itemList.size() == 0){
+            return;
+        }
+        Log.e(TAG, "loadMarkers "+itemList.size()+" "+selectedPosition);
+
+        for(int i = 0; i < itemList.size(); i++){
+            BussinessItem item = itemList.get(i);
+
+            int icon =  R.drawable.ic_marker_other;
+
+            MarkerOptions markerOption = new MarkerOptions().position(new LatLng(item.getCoordinateBussiness().getLatitude(), item.getCoordinateBussiness().getLongitude()));
+            Marker marker = mGoogleMap.addMarker(markerOption);
+
+            View viewMarker = getActivity().getLayoutInflater().inflate(R.layout.item_marker, null);
+            ImageView img = (ImageView)viewMarker.findViewById(R.id.img_marker);
+            img.setImageResource(icon);
+            Bitmap pinCustom = BitmapUtility.createDrawableFromView(getActivity(), viewMarker);
+            marker.setIcon(BitmapDescriptorFactory.fromBitmap(pinCustom));
+            maps.put(marker, item);
+
+        }
+
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        return false;
+    }
+
+    @Override
+    public View getInfoWindow(Marker marker) {
+        return null;
+    }
+
+    @Override
+    public View getInfoContents(Marker marker) {
+        return null;
+    }
+
+    private class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+
+        private View view;
+
+        public CustomInfoWindowAdapter() {
+            view = getActivity().getLayoutInflater().inflate(R.layout.layout_info,
+                    null);
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            return null;
+        }
+
+        @Override
+        public View getInfoWindow(final Marker marker) {
+            mMyMarker = marker;
+            TextView tvAddress = (TextView)view.findViewById(R.id.tv_addess);
+            TextView tvTitle = (TextView) view.findViewById(R.id.tv_title);
+
+            BussinessItem bussinessItem = maps.get(marker);
+            for(int i = 0; i < bussinessItems.size(); i++){
+                if(bussinessItem.getId() == bussinessItems.get(i).getId()){
+                    tvTitle.setText(bussinessItem.getName());
+                    tvAddress.setText(bussinessItem.getLocation().getDisplayAdresses()[0]);
+                    break;
+                }
+            }
+
+            return view;
+        }
+    }
+
+    public void resetData(){
+        if(mGoogleMap != null){
+            this.mGoogleMap.clear();
+        }
+        if(bussinessItems != null){
+            bussinessItems.clear();
+        }
+    }
 }
