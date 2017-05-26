@@ -41,4 +41,28 @@ public class SearchingReqObj {
     public void setLimit(int limit) {
         this.limit = limit;
     }
+
+    public String getTerm() {
+        return term;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
 }

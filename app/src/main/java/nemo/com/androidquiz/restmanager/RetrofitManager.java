@@ -1,14 +1,22 @@
 package nemo.com.androidquiz.restmanager;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
+
 import nemo.com.androidquiz.BuildConfig;
 import nemo.com.androidquiz.utils.APIConstant;
+import nemo.com.androidquiz.utils.TokenManager;
+import okhttp3.Authenticator;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Route;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,9 +30,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitManager {
 
+    private static final String TAG = "RetrofitManager";
     private static RetrofitManager sRetrofitManager;
     public static RestAPIEndPointInterface retrofitInterface;
     private OkHttpClient okHttp;
+    private OkHttpClient.Builder builder;
 
     public static RetrofitManager getInstance() {
         if (sRetrofitManager == null) {
@@ -35,17 +45,43 @@ public class RetrofitManager {
     }
 
     public void config(Context context){
-        okHttp = null;
+        builder = null;
         try {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-            okHttp = new OkHttpClient.Builder()
-                    .addInterceptor(interceptor)
-                    .build();
+            builder = new OkHttpClient.Builder();
+            builder.addInterceptor(interceptor);
+            okHttp = builder.build();
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public void authenticate(){
+        Log.e(TAG, "Authorization "+TokenManager.sBearer+" "+TokenManager.sAccessToken);
+
+        builder = null;
+        try {
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            builder = new OkHttpClient.Builder();
+            builder.addInterceptor(interceptor);
+            okHttp = builder.authenticator(new Authenticator() {
+                @Override
+                public Request authenticate(Route route, okhttp3.Response response) throws IOException {
+                    return response.request().newBuilder()
+                            .header("Authorization", TokenManager.sBearer+" "+TokenManager.sAccessToken)
+                            .build();
+                }
+            }).addInterceptor(interceptor).build();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        initialRetrofit(APIConstant.TEST_BASE_URL);
     }
 
     public RestAPIEndPointInterface getRetrofitInterface() {
@@ -56,6 +92,15 @@ public class RetrofitManager {
         return retrofitInterface;
     }
 
+    public RestAPIEndPointInterface getTokenRetrofitInterface() {
+        retrofitInterface = initialRetrofit(APIConstant.API_GET_TOKEN);
+
+        return retrofitInterface;
+    }
+
+    public void resetManager(){
+        retrofitInterface = null;
+    }
 
     public RestAPIEndPointInterface initialRetrofit(String customRootUrl) {
         Gson gson = new GsonBuilder()

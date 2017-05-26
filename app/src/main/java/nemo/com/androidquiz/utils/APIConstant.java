@@ -7,5 +7,6 @@ package nemo.com.androidquiz.utils;
 public class APIConstant {
 
     public static final String TEST_BASE_URL = "https://api.yelp.com/v3/";
+    public static final String API_GET_TOKEN = "https://api.yelp.com/oauth2/";
 
 }

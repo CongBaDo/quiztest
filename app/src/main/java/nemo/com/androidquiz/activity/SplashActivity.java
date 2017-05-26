@@ -17,7 +17,12 @@ import android.util.Log;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import nemo.com.androidquiz.R;
+import nemo.com.androidquiz.model.token.TokenReqObj;
+import nemo.com.androidquiz.model.token.TokenResObj;
+import nemo.com.androidquiz.restmanager.CommonInterface;
 import nemo.com.androidquiz.restmanager.RetrofitManager;
+import nemo.com.androidquiz.restservice.TokenService;
+import nemo.com.androidquiz.utils.TokenManager;
 
 /**
  * Created by bado on 5/25/17.
@@ -83,15 +88,45 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void loadMainView(){
-        mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
+//        mHandler = new Handler();
+//        mHandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//
+                startActivity(new Intent(SplashActivity.this, MapsActivity.class));
+                finish();
+//            }
+//        }, wait);
+        getToken();
+    }
 
+    private void getToken(){
+
+        TokenReqObj tokenReqObj = new TokenReqObj();
+        tokenReqObj.setClientId(TokenManager.CLIENT_ID);
+        tokenReqObj.setClientSecret(TokenManager.SECRECT_KEY);
+        tokenReqObj.setGrantType("code");
+
+        TokenService tokenService = new TokenService();
+        tokenService.setRequestObject(tokenReqObj);
+        tokenService.request(this, new CommonInterface.ModelResponse<TokenResObj>() {
+            @Override
+            public void onSuccess(TokenResObj result) {
+
+                Log.e(TAG, "onSucess "+result.getAccessToken());
+                TokenManager.sAccessToken = result.getAccessToken();
+                TokenManager.sBearer = result.getTokenType();
+                RetrofitManager.getInstance().resetManager();
+                RetrofitManager.getInstance().authenticate();
                 startActivity(new Intent(SplashActivity.this, MapsActivity.class));
                 finish();
             }
-        }, wait);
+
+            @Override
+            public void onFail() {
+
+            }
+        });
     }
 
 }
