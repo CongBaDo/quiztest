@@ -45,6 +45,9 @@
 
         <activity android:name=".activity.MapsActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.BussinessDetailActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

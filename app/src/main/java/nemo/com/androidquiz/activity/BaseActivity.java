@@ -228,4 +228,8 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
                 break;
         }
     }
+
+    protected void setHeaderBackgroundColor(int color) {
+        mToolBar.setBackgroundColor(color);
+    }
 }

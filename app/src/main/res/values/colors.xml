@@ -16,4 +16,5 @@
     <color name="grey">#C0C0C0</color>
     <color name="blue">#0000FF</color>
     <color name="transparent">#00000000</color>
+    <color name="bg_cover">#494848</color>
 </resources>

@@ -2,11 +2,14 @@ package nemo.com.androidquiz.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * Created by doba on 5/26/17.
  */
 
-public class BussinessItem {
+public class BussinessItem implements Serializable {
 
     private String id;
     private String name;
@@ -20,7 +23,7 @@ public class BussinessItem {
     @SerializedName("review_count")
     private int reviewCount;
 
-    private double rating;
+    private float rating;
 
     private AddressLocation location;
 
@@ -34,7 +37,10 @@ public class BussinessItem {
     @SerializedName("coordinates")
     private CoordinateBussiness coordinateBussiness;
 
-    public class CoordinateBussiness{
+    @SerializedName("categories")
+    private List<CategoryItem> categoryItems;
+
+    public class CoordinateBussiness implements  Serializable{
         private double latitude;
         private double longitude;
 
@@ -47,7 +53,7 @@ public class BussinessItem {
         }
     }
 
-    public class AddressLocation{
+    public class AddressLocation implements Serializable{
         private String address1;
         private String address2;
         private String city;
@@ -110,7 +116,7 @@ public class BussinessItem {
         return reviewCount;
     }
 
-    public double getRating() {
+    public float getRating() {
         return rating;
     }
 
@@ -132,5 +138,23 @@ public class BussinessItem {
 
     public CoordinateBussiness getCoordinateBussiness() {
         return coordinateBussiness;
+    }
+
+
+    public class CategoryItem implements Serializable{
+        private String alias;
+        private String title;
+
+        public String getAlias() {
+            return alias;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+    }
+
+    public List<CategoryItem> getCategoryItems() {
+        return categoryItems;
     }
 }

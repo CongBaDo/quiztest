@@ -36,12 +36,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import nemo.com.androidquiz.R;
+import nemo.com.androidquiz.activity.BussinessDetailActivity;
 import nemo.com.androidquiz.customizedview.TouchableWrapper;
 import nemo.com.androidquiz.model.BussinessItem;
 import nemo.com.androidquiz.model.seach.SearchingReqObj;
 import nemo.com.androidquiz.model.seach.SearchingResObj;
 import nemo.com.androidquiz.restmanager.CommonInterface;
 import nemo.com.androidquiz.restservice.SearchingService;
+import nemo.com.androidquiz.utils.AppConstant;
 import nemo.com.androidquiz.utils.BitmapUtility;
 import nemo.com.androidquiz.utils.LocationController;
 
@@ -95,9 +97,8 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
 
                     if(mCameraLocation != null && moveDistance > 1){
                         Log.e(TAG, "onUpListener NOT NULL "+moveDistance+" "+" "+mCameraLocation.getLatitude());
-//                        resetData();
-//                        loadAddress(mCameraLocation);
-//                        ((MainActivity)getActivity()).filterLocation(0, locationIds, mRadius, mCameraLocation);
+                        resetData();
+                        searchData("restaurant", mCameraLocation);
                     }
             }
 
@@ -222,6 +223,24 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
         });
 
         mGoogleMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+        mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                mMyMarker = marker;
+
+                BussinessItem bussinessItem = maps.get(marker);
+                for(int i = 0; i < bussinessItems.size(); i++){
+                    if(bussinessItem.getId() == bussinessItems.get(i).getId()){
+
+                        Log.e(TAG, "info "+bussinessItem.getName());
+                        Intent intent = new Intent(getActivity(), BussinessDetailActivity.class);
+                        intent.putExtra(AppConstant.INTENT_BUSSINESS_DETAIL, bussinessItem);
+                        startActivity(intent);
+                        break;
+                    }
+                }
+            }
+        });
 
     }
 
@@ -367,7 +386,7 @@ public class QuizMapFragment extends BaseFragment implements OnMapReadyCallback,
         for(int i = 0; i < itemList.size(); i++){
             BussinessItem item = itemList.get(i);
 
-            int icon =  R.drawable.ic_marker_other;
+            int icon =  R.drawable.ic_maker_other;
 
             MarkerOptions markerOption = new MarkerOptions().position(new LatLng(item.getCoordinateBussiness().getLatitude(), item.getCoordinateBussiness().getLongitude()));
             Marker marker = mGoogleMap.addMarker(markerOption);
